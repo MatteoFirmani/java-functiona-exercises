@@ -138,13 +138,13 @@ public class AccountAnalytics {
      */
     public BigDecimal getBalanceByEmail(String email) {
     	Optional<Account> accountFound = this.accounts.stream().filter(account -> account.getEmail().equals(email)).findFirst();
-    	if(accountFound.isPresent())
+    	if(!accountFound.isEmpty())
     	{
     		return accountFound.get().getBalance();
     	}
     	else
     	{
-    		throw new EntityNotFoundException("Cannot find Account by email={"+email+"}");
+    		throw new EntityNotFoundException("Cannot find Account by email="+email);
     	}
         //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
@@ -178,7 +178,7 @@ public class AccountAnalytics {
      * @return a map where key is a last name and value is a set of first names
      */
     public Map<String, Set<String>> groupFirstNamesByLastNames() {
-    	return this.accounts.stream().collect(Collectors.groupingBy(Account::getFirstName, Collectors.mapping(Account::getLastName, Collectors.toSet())));
+    	return this.accounts.stream().collect(Collectors.groupingBy(Account::getLastName, Collectors.mapping(Account::getFirstName, Collectors.toSet())));
         //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
@@ -211,7 +211,6 @@ public class AccountAnalytics {
      * @return a map where key is a letter and value is its count in all first names
      */
     public Map<Character, Long> getCharacterFrequencyInFirstNames() {
-    	Character ch = new Character('a');
     	return this.accounts.stream().map(acc -> acc.getFirstName()).flatMapToInt(String::chars).mapToObj(c -> (char)c).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
         //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
@@ -223,7 +222,8 @@ public class AccountAnalytics {
      * @return a map where key is a letter and value is its count ignoring case in all first and last names
      */
     public Map<Character, Long> getCharacterFrequencyIgnoreCaseInFirstAndLastNames() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	return this.accounts.stream().map(acc -> acc.getFirstName().toLowerCase().concat(acc.getLastName().toLowerCase())).flatMapToInt(String::chars).mapToObj(c -> (char)c).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
 }
