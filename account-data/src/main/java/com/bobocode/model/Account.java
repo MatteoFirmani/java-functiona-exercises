@@ -13,7 +13,21 @@ import java.time.LocalDateTime;
 @ToString
 @EqualsAndHashCode(of = "email")
 public class Account {
-    public Long getId() {
+    public Account(long l, String string, String string2, String string3, LocalDate parse, Sex male, LocalDate parse2,
+			BigDecimal valueOf) {
+		this.id=l;
+		this.firstName = string;
+		this.lastName = string2;
+		this.email = string3;
+		this.birthday = parse;
+		this.sex = male;
+		this.creationDate = parse2;
+		this.balance = valueOf;
+	}
+	public Account() {
+		// TODO Auto-generated constructor stub
+	}
+	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {

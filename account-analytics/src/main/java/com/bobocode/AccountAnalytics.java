@@ -78,7 +78,7 @@ public class AccountAnalytics {
      */
     public Map<String, List<Account>> groupAccountsByEmailDomain() {
     	
-    	return this.accounts.stream().collect(Collectors.groupingBy(Account::getEmail));
+    	return this.accounts.stream().collect(Collectors.groupingBy(account -> account.getEmail().split("@")[1]));
     	
         //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
@@ -114,7 +114,7 @@ public class AccountAnalytics {
      * @return list of accounts sorted by first and last names
      */
     public List<Account> sortByFirstAndLastNames() {
-    	return this.accounts.stream().sorted(Comparator.comparing(Account::getFirstName)).sorted(Comparator.comparing(Account::getLastName)).collect(Collectors.toList());
+    	return this.accounts.stream().sorted(Comparator.comparing(Account::getFirstName).thenComparing(Comparator.comparing(Account::getLastName))).collect(Collectors.toList());
         //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
@@ -125,7 +125,7 @@ public class AccountAnalytics {
      * @return true if there is an account that has an email with provided domain
      */
     public boolean containsAccountWithEmailDomain(String emailDomain) {
-    	return this.accounts.stream().filter(account -> account.getEmail().equals(emailDomain)).findFirst().isPresent();
+    	return this.accounts.stream().map(account -> account.getEmail().split("@")[1]).filter(em -> em.equals(emailDomain)).findFirst().isPresent();
         //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
@@ -211,7 +211,9 @@ public class AccountAnalytics {
      * @return a map where key is a letter and value is its count in all first names
      */
     public Map<Character, Long> getCharacterFrequencyInFirstNames() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	Character ch = new Character('a');
+    	return this.accounts.stream().map(acc -> acc.getFirstName()).flatMapToInt(String::chars).mapToObj(c -> (char)c).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
