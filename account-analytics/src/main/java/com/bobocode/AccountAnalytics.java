@@ -1,14 +1,20 @@
 package com.bobocode;
 
-import com.bobocode.exception.EntityNotFoundException;
-import com.bobocode.model.Account;
-
 import java.math.BigDecimal;
 import java.time.Month;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toMap;
+import com.bobocode.exception.EntityNotFoundException;
+import com.bobocode.model.Account;
+import com.bobocode.model.Sex;
 
 /**
  * Implement methods using Stream API
@@ -30,7 +36,10 @@ public class AccountAnalytics {
      * @return account with max balance wrapped with optional
      */
     public Optional<Account> findRichestPerson() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	
+    	return this.accounts.stream().max(Comparator.comparing(Account::getBalance));
+    	
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -40,7 +49,10 @@ public class AccountAnalytics {
      * @return a list of accounts
      */
     public List<Account> findAccountsByBirthdayMonth(Month birthdayMonth) {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	
+    	return this.accounts.stream().filter(account -> account.getBirthday().getMonth().equals(birthdayMonth)).collect(Collectors.toList());
+    	
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -50,7 +62,12 @@ public class AccountAnalytics {
      * @return a map where key is true or false, and value is list of male, and female accounts
      */
     public Map<Boolean, List<Account>> partitionMaleAccounts() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	
+    	Map<Boolean, List<Account>> result = new HashMap<Boolean, List<Account>>();
+    	result.put(true, this.accounts.stream().filter(account -> account.getSex().equals(Sex.MALE)).collect(Collectors.toList()));
+    	result.put(false, this.accounts.stream().filter(account -> account.getSex().equals(Sex.FEMALE)).collect(Collectors.toList()));
+    	return result;
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -60,7 +77,10 @@ public class AccountAnalytics {
      * @return a map where key is an email domain and value is a list of all account with such email
      */
     public Map<String, List<Account>> groupAccountsByEmailDomain() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	
+    	return this.accounts.stream().collect(Collectors.groupingBy(Account::getEmail));
+    	
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -69,7 +89,10 @@ public class AccountAnalytics {
      * @return total number of letters of first and last names of all accounts
      */
     public int getNumOfLettersInFirstAndLastNames() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	
+    	return this.accounts.stream().mapToInt(account -> account.getFirstName().length() + account.getLastName().length()).sum();
+    	
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -78,7 +101,11 @@ public class AccountAnalytics {
      * @return total balance of all accounts
      */
     public BigDecimal calculateTotalBalance() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+        
+    	return this.accounts.stream().map(account -> account.getBalance()).reduce(BigDecimal.ZERO, BigDecimal::add);
+    	
+    	//throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+        
     }
 
     /**
@@ -87,7 +114,8 @@ public class AccountAnalytics {
      * @return list of accounts sorted by first and last names
      */
     public List<Account> sortByFirstAndLastNames() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	return this.accounts.stream().sorted(Comparator.comparing(Account::getFirstName)).sorted(Comparator.comparing(Account::getLastName)).collect(Collectors.toList());
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -97,7 +125,8 @@ public class AccountAnalytics {
      * @return true if there is an account that has an email with provided domain
      */
     public boolean containsAccountWithEmailDomain(String emailDomain) {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	return this.accounts.stream().filter(account -> account.getEmail().equals(emailDomain)).findFirst().isPresent();
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -108,7 +137,16 @@ public class AccountAnalytics {
      * @return account balance
      */
     public BigDecimal getBalanceByEmail(String email) {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	Optional<Account> accountFound = this.accounts.stream().filter(account -> account.getEmail().equals(email)).findFirst();
+    	if(accountFound.isPresent())
+    	{
+    		return accountFound.get().getBalance();
+    	}
+    	else
+    	{
+    		throw new EntityNotFoundException("Cannot find Account by email={"+email+"}");
+    	}
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -117,7 +155,8 @@ public class AccountAnalytics {
      * @return map of accounts by its ids
      */
     public Map<Long, Account> collectAccountsById() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	return this.accounts.stream().collect(Collectors.toMap(Account::getId, Function.identity()));
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -128,7 +167,8 @@ public class AccountAnalytics {
      * @return map of account by its ids the were created in a particular year
      */
     public Map<String, BigDecimal> collectBalancesByIdForAccountsCreatedOn(int year) {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	return this.accounts.stream().filter(account -> account.getCreationDate().getYear()==year).collect(Collectors.toMap(Account::getEmail, Account::getBalance));
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -138,7 +178,8 @@ public class AccountAnalytics {
      * @return a map where key is a last name and value is a set of first names
      */
     public Map<String, Set<String>> groupFirstNamesByLastNames() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	return this.accounts.stream().collect(Collectors.groupingBy(Account::getFirstName, Collectors.mapping(Account::getLastName, Collectors.toSet())));
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -148,7 +189,8 @@ public class AccountAnalytics {
      * @return a map where a key is a birthday month and value is comma-separated first names
      */
     public Map<Month, String> groupCommaSeparatedFirstNamesByBirthdayMonth() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	return this.accounts.stream().collect(Collectors.groupingBy(a -> a.getBirthday().getMonth(), Collectors.mapping(Account::getFirstName, Collectors.joining(", "))));
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**
@@ -158,7 +200,8 @@ public class AccountAnalytics {
      * @return a map where key is a creation month and value is total balance of all accounts created in that month
      */
     public Map<Month, BigDecimal> groupTotalBalanceByCreationMonth() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+    	return this.accounts.stream().collect(Collectors.groupingBy(a -> a.getCreationDate().getMonth(), Collectors.mapping(Account::getBalance, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
+        //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.bobocode;
 
 
+import java.util.stream.IntStream;
+
 import com.bobocode.exception.InvalidRangeException;
 
 
@@ -21,6 +23,12 @@ public class SumOfSquares {
      * @return the sum of squares of each element in the range
      */
     static int calculateSumOfSquaresInRange(int startInclusive, int endInclusive) {
+    	if (endInclusive < startInclusive) {
+            throw new InvalidRangeException();
+        }
+    	return IntStream.rangeClosed(startInclusive, endInclusive).map(a -> a*a).sum();
+    	
+    	/*
         if (endInclusive < startInclusive) {
             throw new InvalidRangeException();
         }
@@ -31,5 +39,6 @@ public class SumOfSquares {
             sumOfSquares += i * i;
         }
         return sumOfSquares;
+        */
     }
 }

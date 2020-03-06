@@ -13,9 +13,16 @@ public class Functions {
      */
     public static FunctionMap<Integer, Integer> intFunctionMap() {
         FunctionMap<Integer, Integer> intFunctionMap = new FunctionMap<>();
-
+        intFunctionMap.addFunction("abs", FunctionFactory::getAbs);
+        intFunctionMap.addFunction("sgn", FunctionFactory::getSignum);
+        intFunctionMap.addFunction("increment", FunctionFactory::increment);
+        intFunctionMap.addFunction("decrement", FunctionFactory::decrement);
+        intFunctionMap.addFunction("square", FunctionFactory::square);
         // todo: add simple functions to the function map (abs, sng, increment, decrement, square)
 
         return intFunctionMap;
     }
+    
+    
+    
 }
