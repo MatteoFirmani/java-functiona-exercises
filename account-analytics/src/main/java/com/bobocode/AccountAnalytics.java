@@ -63,10 +63,7 @@ public class AccountAnalytics {
      */
     public Map<Boolean, List<Account>> partitionMaleAccounts() {
     	
-    	Map<Boolean, List<Account>> result = new HashMap<Boolean, List<Account>>();
-    	result.put(true, this.accounts.stream().filter(account -> account.getSex().equals(Sex.MALE)).collect(Collectors.toList()));
-    	result.put(false, this.accounts.stream().filter(account -> account.getSex().equals(Sex.FEMALE)).collect(Collectors.toList()));
-    	return result;
+    	return this.accounts.stream().collect(Collectors.partitioningBy(a -> a.getSex().equals(Sex.MALE)));
         //throw new UnsupportedOperationException("It's your job to implement this method"); // todo
     }
 
